@@ -7,13 +7,21 @@
   <title>Vòng Quay May Mắn ITC</title>
   <link rel="stylesheet" href="css/typo/typo.css" />
   <link rel="stylesheet" href="css/hc-canvas-luckwheel.css" />
-  <link href=./images/hengaplai.png rel="icon" type="image/x-icon" />
+  <link href="./images/hengaplai.png" rel="icon" type="image/x-icon" />
 
   <style>
     body {
       background-color: #f0f0f0;
       margin: 0;
       padding: 0;
+    }
+
+    .hc-luckywheel-list img {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+      display: block;
+      margin: 20px auto 0;
     }
 
     .hc-luckywheel {
@@ -48,7 +56,7 @@
       background-color: transparent !important;
     }
 
-    /* Simple SweetAlert styling - giống popup thứ 2 */
+    /* Simple SweetAlert styling */
     .simple-swal-popup {
       background: rgba(255, 255, 255, 0.98) !important;
       border-radius: 20px !important;
@@ -86,64 +94,65 @@
       <script src="js/hc-canvas-luckwheel.js"></script>
       <script>
         var isPercentage = true;
+
+        // Cấu hình giải thưởng với xác suất cân bằng
         var prizes = [
           {
             text: "Chúc bạn may mắn lần sau",
             img: "images/hengaplai.png",
-            percentpage: 0.30
+            percentpage: 0.25
           },
           {
-            text: "Check in nhận quà",
-            img: "images/hsxt.png",
-            percentpage: 0.15
-          },
-          {
-            text: "Bao lì xì",
-            img: "images/lixi.png",
-            number: 1,
-            percentpage: 0.06
-          },
-          {
-            text: "Quạt",
-            img: "images/quat.png",
-            number: 1,
-            percentpage: 0.06
-          },
-          {
-            text: "Chúc bạn may mắn lần sau",
-            img: "images/hengaplai.png",
-            percentpage: 0.30
+            text: "Chuột",
+            img: "images/chuot2.png",
+            percentpage: 0.10
           },
           {
             text: "Bình nước",
-            img: "images/bn.png",
-            number: 1,
-            percentpage: 0.05
+            img: "images/binh.png",
+            percentpage: 0.15
           },
           {
-            text: "Gấu Bông",
-            img: "images/gau.png",
-            number: 1,
-            percentpage: 0.05
+            text: "USB",
+            img: "images/usb.png",
+            percentpage: 0.10
+          },
+
+          {
+            text: "Chúc bạn may mắn lần sau",
+            img: "images/hengaplai.png",
+            percentpage: 0.25
           },
           {
-            text: "Ba lô",
+            text: "Gấu bông",
+            img: "images/gaubong.png",
+            percentpage: 0.15
+          },
+          {
+            text: "Quà bí ẩn",
+            img: "images/gift_Y.png",
+            // number: 30,
+            percentpage: 0.00
+          },
+          {
+            text: "Balo",
             img: "images/balo1.png",
-            number: 1,
-            percentpage: 0.03
-          }
+            // number: 10,
+            percentpage: 0.00
+          },
         ];
 
-        // SweetAlert2 cấu hình
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'center',
-          showConfirmButton: false,
-          timer: 8000,
-          timerProgressBar: true,
-          background: 'rgba(255, 255, 255, 0)',
-          backdrop: false,
-        });
+        // Kiểm tra tổng xác suất
+        function validateProbabilities() {
+          const total = prizes.reduce((sum, prize) => sum + prize.percentpage, 0);
+          console.log("Tổng xác suất:", total.toFixed(2));
+          if (Math.abs(total - 1.0) > 0.001) {
+            console.warn("Cảnh báo: Tổng xác suất không bằng 1.0");
+          }
+        }
+
+        // Gọi kiểm tra khi trang load
+        validateProbabilities();
 
         document.addEventListener(
           "DOMContentLoaded",
@@ -164,7 +173,7 @@
                 console.log("Raw data:", data);
                 console.log("Index:", index);
 
-                // TẮT TOÀN BỘ SWEETALERT TỪ THỜI ĐIỂM NÀY
+                // Tạm thời block SweetAlert từ thư viện để tránh conflict
                 const originalSwal = window.Swal;
                 window.Swal = {
                   fire: function () {
@@ -191,7 +200,7 @@
 
                 // Delay để đảm bảo thư viện không gọi popup
                 setTimeout(() => {
-                  // KHÔI PHỤC LẠI SWAL
+                  // Khôi phục lại SweetAlert
                   window.Swal = originalSwal;
 
                   // Xử lý các trường hợp
@@ -220,15 +229,15 @@
                       }
                     });
                   } else {
-                    // Popup cho các phần thưởng khác - giao diện giống hệt popup "may mắn lần sau"
+                    // Popup cho các phần thưởng khác
                     let displayImg = prizeImg || './images/logo.png';
 
                     originalSwal.fire({
                       title: 'Chúc mừng!',
                       text: `Bạn đã trúng: ${prizeText}`,
                       imageUrl: displayImg,
-                      imageWidth: 100,
-                      imageHeight: 110,
+                      imageWidth: 120,
+                      imageHeight: 120,
                       confirmButtonText: 'OK',
                       backdrop: false,
                       allowOutsideClick: false,
@@ -245,62 +254,33 @@
           false
         );
 
+        // Hàm random index dựa trên xác suất
         function randomIndex(prizes) {
-          if (isPercentage) {
-            var counter = 0;
-            for (let i = 0; i < prizes.length; i++) {
-              if (prizes[i].number == 0) {
-                counter++;
-              }
-            }
-            if (counter == prizes.length) {
-              return null;
-            }
+          if (!isPercentage) {
+            // Nếu không dùng percent thì random đều
+            return Math.floor(Math.random() * prizes.length);
+          }
 
-            let rand = Math.random();
-            let prizeIndex = null;
-            console.log("Random value:", rand);
+          let rand = Math.random();
+          let cumulativeProbability = 0;
 
-            let cumulativeProbability = 0;
-            for (let i = 0; i < prizes.length; i++) {
-              cumulativeProbability += prizes[i].percentpage;
-              if (rand < cumulativeProbability) {
-                prizeIndex = i;
-                break;
-              }
-            }
+          console.log("Random value:", rand);
 
-            console.log("Selected prize index:", prizeIndex, "Prize:", prizes[prizeIndex].text); // Debug log
+          for (let i = 0; i < prizes.length; i++) {
+            cumulativeProbability += prizes[i].percentpage;
+            console.log(`Prize ${i} (${prizes[i].text}): cumulative = ${cumulativeProbability.toFixed(3)}`);
 
-            if (prizes[prizeIndex].number !== undefined && prizes[prizeIndex].number != 0) {
-              prizes[prizeIndex].number--;
-              return prizeIndex;
-            } else if (prizes[prizeIndex].number === undefined) {
-              return prizeIndex;
-            } else {
-              return randomIndex(prizes);
-            }
-          } else {
-            var counter = 0;
-            for (let i = 0; i < prizes.length; i++) {
-              if (prizes[i].number == 0) {
-                counter++;
-              }
-            }
-            if (counter == prizes.length) {
-              return null;
-            }
-            var rand = (Math.random() * (prizes.length)) >>> 0;
-            if (prizes[rand].number !== undefined && prizes[rand].number != 0) {
-              prizes[rand].number--;
-              return rand;
-            } else if (prizes[rand].number === undefined) {
-              return rand;
-            } else {
-              return randomIndex(prizes);
+            if (rand < cumulativeProbability) {
+              console.log(`Selected prize index: ${i}, Prize: ${prizes[i].text}`);
+              return i;
             }
           }
+
+          // Fallback - trả về item cuối cùng
+          console.log("Fallback to last item");
+          return prizes.length - 1;
         }
+
       </script>
     </div>
   </div>
