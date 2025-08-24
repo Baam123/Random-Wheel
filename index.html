@@ -56,7 +56,7 @@
       background-color: transparent !important;
     }
 
-    /* Simple SweetAlert styling */
+    /* Simple SweetAlert styling - giống popup thứ 2 */
     .simple-swal-popup {
       background: rgba(255, 255, 255, 0.98) !important;
       border-radius: 20px !important;
@@ -94,8 +94,6 @@
       <script src="js/hc-canvas-luckwheel.js"></script>
       <script>
         var isPercentage = true;
-
-        // Cấu hình giải thưởng với xác suất cân bằng
         var prizes = [
           {
             text: "Chúc bạn may mắn lần sau",
@@ -105,7 +103,7 @@
           {
             text: "Chuột",
             img: "images/chuot2.png",
-            percentpage: 0.10
+            percentpage: 0.15
           },
           {
             text: "Bình nước",
@@ -126,7 +124,7 @@
           {
             text: "Gấu bông",
             img: "images/gaubong.png",
-            percentpage: 0.15
+            percentpage: 0.10
           },
           {
             text: "Quà bí ẩn",
@@ -142,17 +140,16 @@
           },
         ];
 
-        // Kiểm tra tổng xác suất
-        function validateProbabilities() {
-          const total = prizes.reduce((sum, prize) => sum + prize.percentpage, 0);
-          console.log("Tổng xác suất:", total.toFixed(2));
-          if (Math.abs(total - 1.0) > 0.001) {
-            console.warn("Cảnh báo: Tổng xác suất không bằng 1.0");
-          }
-        }
-
-        // Gọi kiểm tra khi trang load
-        validateProbabilities();
+        // SweetAlert2 cấu hình
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'center',
+          showConfirmButton: false,
+          timer: 8000,
+          timerProgressBar: true,
+          background: 'rgba(255, 255, 255, 0)',
+          backdrop: false,
+        });
 
         document.addEventListener(
           "DOMContentLoaded",
@@ -173,7 +170,7 @@
                 console.log("Raw data:", data);
                 console.log("Index:", index);
 
-                // Tạm thời block SweetAlert từ thư viện để tránh conflict
+                // TẮT TOÀN BỘ SWEETALERT TỪ THỜI ĐIỂM NÀY
                 const originalSwal = window.Swal;
                 window.Swal = {
                   fire: function () {
@@ -200,7 +197,7 @@
 
                 // Delay để đảm bảo thư viện không gọi popup
                 setTimeout(() => {
-                  // Khôi phục lại SweetAlert
+                  // KHÔI PHỤC LẠI SWAL
                   window.Swal = originalSwal;
 
                   // Xử lý các trường hợp
@@ -229,7 +226,7 @@
                       }
                     });
                   } else {
-                    // Popup cho các phần thưởng khác
+                    // Popup cho các phần thưởng khác - giao diện giống hệt popup "may mắn lần sau"
                     let displayImg = prizeImg || './images/logo.png';
 
                     originalSwal.fire({
@@ -237,7 +234,7 @@
                       text: `Bạn đã trúng: ${prizeText}`,
                       imageUrl: displayImg,
                       imageWidth: 120,
-                      imageHeight: 120,
+                      // imageHeight: 110,
                       confirmButtonText: 'OK',
                       backdrop: false,
                       allowOutsideClick: false,
@@ -254,31 +251,78 @@
           false
         );
 
-        // Hàm random index dựa trên xác suất
+        // Nếu muốn sử dụng phải thêm giá trị number
+        // function randomIndex(prizes) {
+        //   if (isPercentage) {
+        //     var counter = 0;
+        //     for (let i = 0; i < prizes.length; i++) {
+        //       if (prizes[i].number == 0) {
+        //         counter++;
+        //       }
+        //     }
+        //     if (counter == prizes.length) {
+        //       return null;
+        //     }
+
+        //     let rand = Math.random();
+        //     let prizeIndex = null;
+        //     console.log("Random value:", rand);
+
+        //     let cumulativeProbability = 0;
+        //     for (let i = 0; i < prizes.length; i++) {
+        //       cumulativeProbability += prizes[i].percentpage;
+        //       if (rand < cumulativeProbability) {
+        //         prizeIndex = i;
+        //         break;
+        //       }
+        //     }
+
+        //     console.log("Selected prize index:", prizeIndex, "Prize:", prizes[prizeIndex].text); // Debug log
+
+        //     if (prizes[prizeIndex].number !== undefined && prizes[prizeIndex].number != 0) {
+        //       prizes[prizeIndex].number--;
+        //       return prizeIndex;
+        //     } else if (prizes[prizeIndex].number === undefined) {
+        //       return prizeIndex;
+        //     } else {
+        //       return randomIndex(prizes);
+        //     }
+        //   } else {
+        //     var counter = 0;
+        //     for (let i = 0; i < prizes.length; i++) {
+        //       if (prizes[i].number == 0) {
+        //         counter++;
+        //       }
+        //     }
+        //     if (counter == prizes.length) {
+        //       return null;
+        //     }
+        //     var rand = (Math.random() * (prizes.length)) >>> 0;
+        //     if (prizes[rand].number !== undefined && prizes[rand].number != 0) {
+        //       prizes[rand].number--;
+        //       return rand;
+        //     } else if (prizes[rand].number === undefined) {
+        //       return rand;
+        //     } else {
+        //       return randomIndex(prizes);
+        //     }
+        //   }
+        // }
+
         function randomIndex(prizes) {
-          if (!isPercentage) {
-            // Nếu không dùng percent thì random đều
-            return Math.floor(Math.random() * prizes.length);
-          }
-
-          let rand = Math.random();
-          let cumulativeProbability = 0;
-
-          console.log("Random value:", rand);
-
-          for (let i = 0; i < prizes.length; i++) {
-            cumulativeProbability += prizes[i].percentpage;
-            console.log(`Prize ${i} (${prizes[i].text}): cumulative = ${cumulativeProbability.toFixed(3)}`);
-
-            if (rand < cumulativeProbability) {
-              console.log(`Selected prize index: ${i}, Prize: ${prizes[i].text}`);
-              return i;
+          if (isPercentage) {
+            let rand = Math.random();
+            let cumulativeProbability = 0;
+            for (let i = 0; i < prizes.length; i++) {
+              cumulativeProbability += prizes[i].percentpage;
+              if (rand < cumulativeProbability) {
+                return i;
+              }
             }
+          } else {
+            // nếu không dùng percent thì random đều
+            return (Math.random() * prizes.length) >>> 0;
           }
-
-          // Fallback - trả về item cuối cùng
-          console.log("Fallback to last item");
-          return prizes.length - 1;
         }
 
       </script>
