@@ -96,12 +96,13 @@
         var isPercentage = true;
         var prizes = [
           {
-            text: "Chúc bạn may mắn lần sau",
+            // text: "Chúc bạn may mắn lần sau",
+            text: "Chào mừng bạn đến với ITC",
             img: "images/hengaplai.png",
             percentpage: 0.25
           },
           {
-            text: "Chuột",
+            text: "Chuột Bluetooth",
             img: "images/chuot2.png",
             percentpage: 0.10
           },
@@ -111,13 +112,13 @@
             percentpage: 0.15
           },
           {
-            text: "USB",
+            text: "USB 3.2 Kingston",
             img: "images/usb.png",
             percentpage: 0.10
           },
-
           {
-            text: "Chúc bạn may mắn lần sau",
+            // text: "Chúc bạn may mắn lần sau",
+            text: "Chào mừng bạn đến với ITC",
             img: "images/hengaplai.png",
             percentpage: 0.25
           },
@@ -133,7 +134,7 @@
             percentpage: 0.00
           },
           {
-            text: "Balo",
+            text: "Balo ITC",
             img: "images/balo1.png",
             // number: 10,
             percentpage: 0.00
@@ -210,10 +211,10 @@
                       backdrop: false,
                       allowOutsideClick: false
                     });
-                  } else if (prizeText === 'Chúc bạn may mắn lần sau' || prizeText.includes('may mắn')) {
+                  } else if (prizeText === 'Join ITC family 💛' || prizeText.includes('may mắn')) {
                     originalSwal.fire({
-                      title: 'Chúc bạn may mắn lần sau',
-                      text: 'Bạn không trúng thưởng',
+                      title: 'CHÀO MỪNG',
+                      text: 'Tân sinh viên ITC Khóa 25',
                       imageUrl: './images/hengaplai.png',
                       imageWidth: 100,
                       imageHeight: 100,
@@ -234,7 +235,6 @@
                       text: `Bạn đã trúng: ${prizeText}`,
                       imageUrl: displayImg,
                       imageWidth: 120,
-                      // imageHeight: 110,
                       confirmButtonText: 'OK',
                       backdrop: false,
                       allowOutsideClick: false,
